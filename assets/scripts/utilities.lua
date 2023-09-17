@@ -2,16 +2,12 @@ utilities = {}
 do
     -- get all loaded entities
     utilities.get_entities = function()
-        local registered_ids = {}
         local entities = {}
 
         for _, torso in pairs(FindBodies("Torso", true)) do
-            local torso_position = GetBodyTransform(torso).pos
-
             -- check if entity is not dead and if the torso is above ground
             if (
-                not HasTag(torso, "dead") and
-                torso_position[2] > 0
+                not HasTag(torso, "dead")
             ) then
                 local torso_id = GetTagValue(torso, "gore_id") -- entity id
                 local entity = {} -- entity structure
@@ -103,18 +99,31 @@ do
                         break
                     end
                 end
+                
+                -- check if entity body parts are all valid and existing
+                local is_entity_valid = true
+
+                for _, part in pairs(entity) do
+                    if part == nil then
+                        is_entity_valid = false
+                        break
+                    end
+
+                    local part_position = GetBodyTransform(part).pos
+                    if part_position[2] < -3 then
+                        is_entity_valid = false
+                        break
+                    end
+                end
 
                 -- add entity to entities table
                 if not (
                     IsBodyJointedToStatic(entity["left_foot"]) and
                     IsBodyJointedToStatic(entity["right_foot"]) and
-                    not registered_ids[torso_id]
+                    is_entity_valid
                 ) then
                     table.insert(entities, entity)
                 end
-
-                -- register entity id
-                registered_ids[torso_id] = true
             end
         end
 

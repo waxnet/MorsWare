@@ -1,3 +1,5 @@
+-----
+
 <p align="center">
   <kbd>
     <img src="https://raw.githubusercontent.com/waxnet/MorsWare/main/.github/workflows/icon.png">

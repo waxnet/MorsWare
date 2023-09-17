@@ -4,31 +4,39 @@
 #include "assets/scripts/utilities.lua"
 #include "assets/scripts/menu.lua"
 
-#include "assets/scripts/modules/esp.lua"
+#include "assets/scripts/data/offsets.lua"
+
 #include "assets/scripts/modules/aimbot.lua"
+#include "assets/scripts/modules/silentaim.lua"
+#include "assets/scripts/modules/esp.lua"
+#include "assets/scripts/modules/exploits.lua"
 
 -- callbacks
+function init()
+    config.refresh()
+end
+
 function tick()
+    if not utilities.is_playing() then return end
+
+    silentaim.tick()
     esp.tick()
+    exploits.tick()
 end
 
 function update()
-    -- check if player is in game
-    if not utilities.is_playing() then
-        return
-    end
+    if not utilities.is_playing() then return end
 
     aimbot.update()
+    exploits.update()
 end
 
 function draw()
-    -- check if player is in game
-    if not utilities.is_playing() then
-        return
-    end
+    if not utilities.is_playing() then return end
 
     esp.draw()
     aimbot.draw()
+    silentaim.draw()
 
     -- draw menu
     local width = 500

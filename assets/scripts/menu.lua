@@ -3,11 +3,13 @@ do
 	menu.data = {
 		["draw"] = false,
 		["tab"] = "combat",
-		["tab_offset"] = 0
+		["tab_offset"] = 0,
+		["section_offset"] = 0
 	}
 	
 	menu.reset = function()
 		menu.data["tab_offset"] = 0
+		menu.data["section_offset"] = 0
 	end
 
 	menu.new_tab = function(data)
@@ -46,6 +48,7 @@ do
 		local name = data["name"]
 		local components = data["components"]
 	
+		UiTranslate(menu.data["section_offset"], 0)
 		UiPush()
 			UiFont("bold.ttf", 24)
 			UiAlign("top left")
@@ -54,6 +57,10 @@ do
 			
 			components()
 		UiPop()
+
+		if menu.data["section_offset"] == 0 then
+			menu.data["section_offset"] = 170
+		end
 	end
 	
 	menu.new_subsection = function(name)
@@ -90,7 +97,7 @@ do
                 if UiTextButton(tostring(toggle_value)) then
                     SetBool(path, not toggle_value)
 
-					config.update()
+					config.refresh()
                 end
             UiPop()
         UiPop()
@@ -133,7 +140,7 @@ do
                 if UiIsMouseInRect(plus_width, plus_height) and InputDown("lmb") and slider_value < max then
                     SetInt(path, slider_value + 1)
 
-					config.update()
+					config.refresh()
                 end
 
                 UiTranslate(13, 2)
@@ -144,7 +151,7 @@ do
                 if UiIsMouseInRect(minus_width, minus_height) and InputDown("lmb") and slider_value > min then
                     SetInt(path, slider_value - 1)
 
-					config.update()
+					config.refresh()
                 end
             UiPop()
         UiPop()
@@ -181,7 +188,7 @@ do
                     
                     SetString(path, new_list_value)
 
-					config.update()
+					config.refresh()
                 end
             UiPop()
         UiPop()
@@ -252,7 +259,7 @@ do
 				UiColor(version_rgb[1], version_rgb[2], version_rgb[3])
 				UiTranslate((width - 3), 9)
 				UiAlign("middle right")
-				UiText("v1.0")
+				UiText("v1.1")
 			UiPop()
 			UiTranslate(0, 18)
 
@@ -264,9 +271,11 @@ do
 			UiPop()
 			UiTranslate(6, 9)
 			
+			-- combat
 			menu.new_tab({
 				["name"] = "Combat",
 				["components"] = function()
+					-- aimbot
 					menu.new_section({
 						["name"] = "Aimbot",
 						["components"] = function()
@@ -339,12 +348,77 @@ do
 							})
 						end
 					})
+
+					-- silent aim
+					menu.new_section({
+						["name"] = "Silent Aim",
+						["components"] = function()
+							menu.new_toggle({
+								["text"] = "Enabled",
+								["path"] = "silentaim.enabled"
+							})
+							
+							-- fov
+							menu.new_subsection("FOV")
+							menu.new_toggle({
+								["text"] = "Check",
+								["path"] = "silentaim.config.fov.check"
+							})
+							menu.new_slider({
+								["text"] = "Size",
+								["path"] = "silentaim.config.fov.size",
+								["max"] = 400,
+								["min"] = 10
+							})
+							menu.new_toggle({
+								["text"] = "Draw",
+								["path"] = "silentaim.config.fov.draw"
+							})
+							menu.new_slider({
+								["text"] = "Sides",
+								["path"] = "silentaim.config.fov.sides",
+								["max"] = 80,
+								["min"] = 12
+							})
+							menu.new_list({
+								["text"] = "Rainbow",
+								["path"] = "silentaim.config.fov.rainbow",
+								["options"] = {
+									"disabled",
+									"normal",
+									"wave"
+								}
+							})
+
+							-- visibility
+							menu.new_subsection("Visibility")
+							menu.new_toggle({
+								["text"] = "Check",
+								["path"] = "silentaim.config.visibility.check"
+							})
+
+							-- distance
+							menu.new_subsection("Distance")
+							menu.new_toggle({
+								["text"] = "Check",
+								["path"] = "silentaim.config.distance.check"
+							})
+							menu.new_slider({
+								["text"] = "Range",
+								["path"] = "silentaim.config.distance.range",
+								["max"] = 1000,
+								["min"] = 0
+							})
+						end
+					})
 				end
 			})
 			
+			-- visual
 			menu.new_tab({
 				["name"] = "Visual",
 				["components"] = function()
+					-- esp
 					menu.new_section({
 						["name"] = "ESP",
 						["components"] = function()
@@ -389,6 +463,55 @@ do
 							menu.new_toggle({
 								["text"] = "Boxes",
 								["path"] = "esp.config.boxes"
+							})
+						end
+					})
+				end
+			})
+
+			-- exploits
+			menu.new_tab({
+				["name"] = "Exploits",
+				["components"] = function()
+					-- force nv
+					menu.new_section({
+						["name"] = "Force NV",
+						["components"] = function()
+							menu.new_toggle({
+								["text"] = "Enabled",
+								["path"] = "exploits.force_nv"
+							})
+							menu.new_list({
+								["text"] = "Mode",
+								["path"] = "exploits.force_nv_mode",
+								["options"] = {
+									"thermals",
+									"pnv10t",
+									"nvg",
+									"pvs14"
+								}
+							})
+						end
+					})
+
+					-- infinite fuel
+					menu.new_section({
+						["name"] = "Infinite Fuel",
+						["components"] = function()
+							menu.new_toggle({
+								["text"] = "Enabled",
+								["path"] = "exploits.infinite_fuel"
+							})
+						end
+					})
+
+					-- instant revive
+					menu.new_section({
+						["name"] = "Instant Revive",
+						["components"] = function()
+							menu.new_toggle({
+								["text"] = "Enabled",
+								["path"] = "exploits.instant_revive"
 							})
 						end
 					})
