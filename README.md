@@ -21,6 +21,14 @@
 
 -----
 
+### <p align="center">🔑 Usage 🔑</p>
+<p align="center"><i><b>
+To install MorsWare you need to run the file "pack.cmd", it
+will automatically place the files in your local mods.
+</b></i></p>
+
+-----
+
 ### <p align="center">🤔 Purpose 🤔</p>
 <p align="center"><i><b>
 This mod was made to replicate modern FPS game cheats.
