@@ -2,19 +2,14 @@ esp = {}
 do
     esp.tick = function()
         if config.esp.enabled then
-            -- update esp origin for tracers
-            if config.esp.config.tracers then
-                config.esp.origin = VecSub(GetCameraTransform().pos, Vec(0, 3, 0))
-            end
-        
-            -- this has to be in the tick function to override the outline applied by the game
+            -- this has to be in the tick function to overwrite the outline applied by the game
             if config.esp.targets.loot then
                 local loot = utilities.get_loot()
 
                 if #loot > 0 then
-                    for _, item in pairs(loot) do
-                        -- outlines
-                        if config.esp.config.outlines then
+                    -- outlines
+                    if config.esp.config.outlines then
+                        for _, item in pairs(loot) do
                             DrawBodyOutline(item, 1, 1, 0, 1)
                         end
                     end
@@ -25,10 +20,17 @@ do
 
     esp.draw = function()
         if config.esp.enabled then
+            local origin_x, origin_y
+            if config.esp.config.tracers then
+                origin_x = (UiWidth() / 2)
+                origin_y = UiHeight()
+            end
+
             -- loot
             if config.esp.targets.loot then
                 local loot = utilities.get_loot()
 
+                -- check if there is any loot
                 if #loot > 0 then
                     for _, item in pairs(loot) do
                         -- nametags
@@ -55,7 +57,33 @@ do
 
                         -- tracers
                         if config.esp.config.tracers then
-                            DebugLine(config.esp.origin, GetBodyTransform(item).pos, 1, 1, 0, 1)
+                            local item_position = GetBodyTransform(item).pos
+                            local item_x, item_y, item_d = UiWorldToPixel(item_position)
+                            
+                            if item_d > 0 then
+                                local direction = (origin_x - item_x) > 0 and 1 or -1
+                                
+                                local side_a = math.abs(origin_x - item_x)
+                                local side_b = math.abs(origin_y - item_y)
+                                local side_c = math.sqrt((side_a ^ 2) + (side_b ^ 2))
+                                
+                                local angle = 0
+                                if side_a > side_b then
+                                    angle = (math.deg(math.asin(side_a / side_c)) * direction)
+                                else
+                                    angle = (math.deg(math.acos(side_b / side_c)) * direction)
+                                end
+                                
+                                UiPush()
+                                    UiTranslate(origin_x, origin_y)
+                                    UiAlign("middle bottom")
+                                    UiRotate(angle)
+                                
+                                    UiColor(1, 1, 0)
+                                    
+                                    UiRect(1, -(side_c * 2))
+                                UiPop()
+                            end
                         end
                     end
                 end
@@ -70,14 +98,14 @@ do
                     for _, entity in pairs(entities) do
                         -- nametags
                         if config.esp.config.nametags then
-                            local target_position = TransformToParentPoint(GetBodyTransform(entity["head"]), Vec(0, .2, 0))
-                            local target_x, target_y, distance = UiWorldToPixel(target_position)
+                            local head_position = TransformToParentPoint(GetBodyTransform(entity["head"]), Vec(0, .2, 0))
+                            local head_x, head_y, distance = UiWorldToPixel(head_position)
                             local on_screen = distance > 0
                             
                             if on_screen then
                                 UiPush()
                                     UiFont("bold.ttf", 10)
-                                    UiTranslate(target_x, target_y)
+                                    UiTranslate(head_x, head_y)
                                     UiAlign("bottom center")
                                     UiColor(1, 0, 0)
                                     UiText("ENEMY")
@@ -89,36 +117,36 @@ do
                         if config.esp.config.bones then
                             -- head and torso positions
                             local head_min, head_max = GetBodyBounds(entity["head"])
-                            local head_position = VecLerp(head_min, head_max, 0.5)
+                            local head_position = VecLerp(head_min, head_max, .5)
 
-                            local torso_top = TransformToParentPoint(GetBodyTransform(entity["torso"]), Vec(0, .2, 0))
-                            local torso_bottom = TransformToParentPoint(GetBodyTransform(entity["torso"]), Vec(0, -.4, 0))
+                            local torso_top = TransformToParentPoint(GetBodyTransform(entity["torso"]), Vec(0, .6, 0))
+                            local torso_bottom = GetBodyTransform(entity["torso"]).pos
 
                             -- arms and hands positions
                             local left_arm_min, left_arm_max = GetBodyBounds(entity["left_arm"])
-                            local left_arm_position = VecLerp(left_arm_min, left_arm_max, 0.5)
+                            local left_arm_position = VecLerp(left_arm_min, left_arm_max, .5)
 
                             local right_arm_min, right_arm_max = GetBodyBounds(entity["right_arm"])
-                            local right_arm_position = VecLerp(right_arm_min, right_arm_max, 0.5)
+                            local right_arm_position = VecLerp(right_arm_min, right_arm_max, .5)
 
                             local left_hand_min, left_hand_max = GetBodyBounds(entity["left_hand"])
-                            local left_hand_position = VecLerp(left_hand_min, left_hand_max, 0.5)
+                            local left_hand_position = VecLerp(left_hand_min, left_hand_max, .5)
 
                             local right_hand_min, right_hand_max = GetBodyBounds(entity["right_hand"])
-                            local right_hand_position = VecLerp(right_hand_min, right_hand_max, 0.5)
+                            local right_hand_position = VecLerp(right_hand_min, right_hand_max, .5)
 
                             -- legs and feet positions
                             local left_leg_min, left_leg_max = GetBodyBounds(entity["left_leg"])
-                            local left_leg_position = VecLerp(left_leg_min, left_leg_max, 0.5)
+                            local left_leg_position = VecLerp(left_leg_min, left_leg_max, .5)
 
                             local right_leg_min, right_leg_max = GetBodyBounds(entity["right_leg"])
-                            local right_leg_position = VecLerp(right_leg_min, right_leg_max, 0.5)
+                            local right_leg_position = VecLerp(right_leg_min, right_leg_max, .5)
 
                             local left_foot_min, left_foot_max = GetBodyBounds(entity["left_foot"])
-                            local left_foot_position = VecLerp(left_foot_min, left_foot_max, 0.5)
+                            local left_foot_position = VecLerp(left_foot_min, left_foot_max, .5)
 
                             local right_foot_min, right_foot_max = GetBodyBounds(entity["right_foot"])
-                            local right_foot_position = VecLerp(right_foot_min, right_foot_max, 0.5)
+                            local right_foot_position = VecLerp(right_foot_min, right_foot_max, .5)
 
                             -- draw bones
                             DebugLine(torso_top, head_position, 1, 0, 0, 1)
@@ -137,35 +165,47 @@ do
 
                         -- outlines
                         if config.esp.config.outlines then
-                            DrawBodyOutline(entity["head"], 1, 0, 0, 1)
-                            DrawBodyOutline(entity["torso"], 1, 0, 0, 1)
-                            DrawBodyOutline(entity["left_arm"], 1, 0, 0, 1)
-                            DrawBodyOutline(entity["right_arm"], 1, 0, 0, 1)
-                            DrawBodyOutline(entity["left_hand"], 1, 0, 0, 1)
-                            DrawBodyOutline(entity["right_hand"], 1, 0, 0, 1)
-                            DrawBodyOutline(entity["left_leg"], 1, 0, 0, 1)
-                            DrawBodyOutline(entity["right_leg"], 1, 0, 0, 1)
-                            DrawBodyOutline(entity["left_foot"], 1, 0, 0, 1)
-                            DrawBodyOutline(entity["right_foot"], 1, 0, 0, 1)
+                            for _, part in pairs(entity) do
+                                DrawBodyOutline(part, 1, 0, 0, 1)
+                            end
                         end
 
                         -- highlights
                         if config.esp.config.highlights then
-                            DrawBodyHighlight(entity["head"], 1)
-                            DrawBodyHighlight(entity["torso"], 1)
-                            DrawBodyHighlight(entity["left_arm"], 1)
-                            DrawBodyHighlight(entity["right_arm"], 1)
-                            DrawBodyHighlight(entity["left_hand"], 1)
-                            DrawBodyHighlight(entity["right_hand"], 1)
-                            DrawBodyHighlight(entity["left_leg"], 1)
-                            DrawBodyHighlight(entity["right_leg"], 1)
-                            DrawBodyHighlight(entity["left_foot"], 1)
-                            DrawBodyHighlight(entity["right_foot"], 1)
+                            for _, part in pairs(entity) do
+                                DrawBodyHighlight(part, 1)
+                            end
                         end
 
                         -- tracers
                         if config.esp.config.tracers then
-                            DebugLine(config.esp.origin, GetBodyTransform(entity["torso"]).pos, 1, 0, 0, 1)
+                            local torso_position = GetBodyTransform(entity["torso"]).pos
+                            local torso_x, torso_y, torso_d = UiWorldToPixel(torso_position)
+                            
+                            if torso_d > 0 then
+                                local direction = (origin_x - torso_x) > 0 and 1 or -1
+                                
+                                local side_a = math.abs(origin_x - torso_x)
+                                local side_b = math.abs(origin_y - torso_y)
+                                local side_c = math.sqrt((side_a ^ 2) + (side_b ^ 2))
+                                
+                                local angle = 0
+                                if side_a > side_b then
+                                    angle = (math.deg(math.asin(side_a / side_c)) * direction)
+                                else
+                                    angle = (math.deg(math.acos(side_b / side_c)) * direction)
+                                end
+                                
+                                UiPush()
+                                    UiTranslate(origin_x, origin_y)
+                                    UiAlign("middle bottom")
+                                    UiRotate(angle)
+                                
+                                    UiColor(1, 0, 0)
+                                    
+                                    UiRect(1, -(side_c * 2))
+                                UiPop()
+                            end
                         end
 
                         -- boxes

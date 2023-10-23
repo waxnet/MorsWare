@@ -8,6 +8,7 @@
 
 #include "assets/scripts/modules/aimbot.lua"
 #include "assets/scripts/modules/silentaim.lua"
+#include "assets/scripts/modules/movement.lua"
 #include "assets/scripts/modules/esp.lua"
 #include "assets/scripts/modules/exploits.lua"
 
@@ -28,6 +29,7 @@ function update()
     if not utilities.is_playing() then return end
 
     aimbot.update()
+    movement.update()
     exploits.update()
 end
 
@@ -40,7 +42,7 @@ function draw()
 
     -- draw menu
     local width = 500
-    local height = 340
+    local height = 395
 
-    menu.draw_menu(500, 340, 100, ((UiHeight() / 2) - (height / 2)))
+    menu.draw_menu(width, height, 100, ((UiHeight() / 2) - (height / 2)))
 end

@@ -1,8 +1,16 @@
+# modules
 import os
 
-content = "%userprofile%/Documents/Teardown/mods/Mors Longa Copy/script"
+# morslonga copy directory and data container
+content = os.getenv("userprofile") + "\\Documents\\Teardown\\mods\\Mors Longa Copy\\script"
 data = {}
 
+# clean cmd and set title
+os.system("title MorsWare Tools - Weapon Offset Dumper")
+os.system("cls")
+
+# parse data from files
+print("Parsing data...")
 for file in os.listdir(content):
     if file.endswith(".lua"):
         script_path = os.path.join(content, file)
@@ -29,8 +37,14 @@ for file in os.listdir(content):
                 data[data_key] = line.split(b"Vec")[1].decode()
                 break
 
+# dump data
+print("Dumping data...")
 with open("offsets.lua", "w+") as dump:
     parsed_data = str(data).replace("'(", "{").replace("))\\r\\n'", "}").replace("':", "\"] =").replace("'", "[\"")
 
     dump.write(f"offsets = {parsed_data}")
     dump.close()
+
+# exit
+print("\nPress enter to exit...")
+input()

@@ -11,6 +11,10 @@ do
                     sides = registry.get_int("aimbot.config.fov.sides", 80),
                     rainbow = registry.get_string("aimbot.config.fov.rainbow", "disabled"),
                 },
+                smoothing = {
+                    enabled = registry.get_bool("aimbot.config.smoothing.enabled"),
+                    amount = registry.get_int("aimbot.config.smoothing.amount", 50),
+                },
                 visibility = {
                     check = registry.get_bool("aimbot.config.visibility.check"),
                 },
@@ -41,6 +45,11 @@ do
                 }
             },
         }
+
+        config.movement = {
+            no_fall = registry.get_bool("movement.no_fall"),
+            no_fall_mode = registry.get_string("movement.no_fall_mode", "glide"),
+        }
     
         config.esp = {
             enabled = registry.get_bool("esp.enabled"),
@@ -56,7 +65,6 @@ do
                 entities = registry.get_bool("esp.targets.entities"),
                 loot = registry.get_bool("esp.targets.loot"),
             },
-            origin = nil,
         }
 
         config.exploits = {

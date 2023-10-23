@@ -9,7 +9,7 @@ function draw()
 
     -- draw menu
     local width = 500
-    local height = 340
+    local height = 395
 
     menu.draw_menu(
         width,

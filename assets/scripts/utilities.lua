@@ -100,28 +100,45 @@ do
                     end
                 end
                 
-                -- check if entity body parts are all valid and existing
+                -- check if the entity body parts are all existing and valid
                 local is_entity_valid = true
 
                 for _, part in pairs(entity) do
-                    if part == nil then
-                        is_entity_valid = false
-                        break
+                    if part ~= nil then
+                    local part_position = GetBodyTransform(part).pos
+
+                        if part_position[2] < -3 then
+                            is_entity_valid = false
+                            break
+                        end
+                    end
+                end
+
+                if is_entity_valid then
+                    local center_point = GetBodyTransform(entity["torso"]).pos
+                    local highest_distance = 0
+
+                    for _, part in pairs(entity) do
+                        if part ~= nil then
+                            local part_position = GetBodyTransform(part).pos
+                            local distance = VecLength(VecSub(center_point, part_position))
+                            
+                            if distance > highest_distance then
+                                highest_distance = distance
+                            end
+                        end
                     end
 
-                    local part_position = GetBodyTransform(part).pos
-                    if part_position[2] < -3 then
+                    if highest_distance > 1.5 then
                         is_entity_valid = false
-                        break
                     end
                 end
 
                 -- add entity to entities table
                 if not (
                     IsBodyJointedToStatic(entity["left_foot"]) and
-                    IsBodyJointedToStatic(entity["right_foot"]) and
-                    is_entity_valid
-                ) then
+                    IsBodyJointedToStatic(entity["right_foot"])
+                ) and is_entity_valid then
                     table.insert(entities, entity)
                 end
             end
@@ -142,7 +159,7 @@ do
                 not HasTag(item, "invisible") and
                 IsHandleValid(item) and
                 not IsBodyBroken(item) and
-                item_position[2] > 0
+                item_position[2] > -3
             ) then
                 table.insert(items, item)
             end

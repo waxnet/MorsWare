@@ -19,6 +19,8 @@ do
                 local closest_target = nil
 
                 -- get best target
+                local player_position = GetPlayerTransform().pos
+                
                 for _, entity in pairs(entities) do
                     -- set target
                     local target = entity["torso"]
@@ -31,7 +33,6 @@ do
 
                     if is_visible then
                         local target_position = GetBodyTransform(target).pos
-                        local player_position = GetPlayerTransform().pos
                         local player_target_distance = VecLength(VecSub(player_position, target_position))
                         
                         -- check if target is in range

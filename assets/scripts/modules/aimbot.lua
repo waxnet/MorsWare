@@ -11,6 +11,8 @@ do
                 local closest_target = nil
 
                 -- get best target
+                local player_position = GetPlayerTransform().pos
+
                 for _, entity in pairs(entities) do
                     -- set target
                     local target = entity["torso"]
@@ -28,7 +30,6 @@ do
 
                     if is_visible then
                         local target_position = GetBodyTransform(target).pos
-                        local player_position = GetPlayerTransform().pos
                         local player_target_distance = VecLength(VecSub(player_position, target_position))
                         
                         -- check if target is in range
@@ -61,13 +62,26 @@ do
 
                 -- check if a target has been found
                 if closest_target then
-                    -- get new player rotation
-                    local player_position = GetPlayerTransform().pos
-                    local new_player_rotation = QuatLookAt(GetCameraTransform().pos, GetBodyTransform(closest_target).pos)
+                    -- camera values
+                    local camera_transform = GetCameraTransform()
+                    local camera_position = camera_transform.pos
+                    local camera_rotation = camera_transform.rot
 
-                    -- make player look at target and keep player velocity
+                    -- get new player rotation
+                    local new_rotation = QuatLookAt(camera_position, GetBodyTransform(closest_target).pos)
+
+                    -- apply smoothing
+                    if config.aimbot.config.smoothing.enabled then
+                        -- calculate smoothing multiplier
+                        local smoothing_multiplier = ((100 - config.aimbot.config.smoothing.amount) / 100)
+
+                        -- overwrite new rotation
+                        new_rotation = QuatSlerp(camera_rotation, new_rotation, smoothing_multiplier)
+                    end
+
+                    -- set new rotation and keep player velocity
                     local old_velocity = GetPlayerVelocity()
-                    SetPlayerTransform(Transform(player_position, new_player_rotation), true)
+                    SetPlayerTransform(Transform(player_position, new_rotation), true)
                     SetPlayerVelocity(old_velocity)
                 end
             end

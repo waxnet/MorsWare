@@ -259,7 +259,7 @@ do
 				UiColor(version_rgb[1], version_rgb[2], version_rgb[3])
 				UiTranslate((width - 3), 9)
 				UiAlign("middle right")
-				UiText("v1.1")
+				UiText("v1.2")
 			UiPop()
 			UiTranslate(0, 18)
 
@@ -314,6 +314,19 @@ do
 									"normal",
 									"wave"
 								}
+							})
+
+							-- smoothing
+							menu.new_subsection("Smoothing")
+							menu.new_toggle({
+								["text"] = "Enabled",
+								["path"] = "aimbot.config.smoothing.enabled"
+							})
+							menu.new_slider({
+								["text"] = "Amount",
+								["path"] = "aimbot.config.smoothing.amount",
+								["max"] = 80,
+								["min"] = 0
 							})
 
 							-- visibility
@@ -408,6 +421,32 @@ do
 								["path"] = "silentaim.config.distance.range",
 								["max"] = 1000,
 								["min"] = 0
+							})
+						end
+					})
+				end
+			})
+
+			-- movement
+			menu.new_tab({
+				["name"] = "Movement",
+				["components"] = function()
+					-- nofall
+					menu.new_section({
+						["name"] = "No Fall",
+						["components"] = function()
+							menu.new_toggle({
+								["text"] = "Enabled",
+								["path"] = "movement.no_fall"
+							})
+							menu.new_list({
+								["text"] = "Mode",
+								["path"] = "movement.no_fall_mode",
+								["options"] = {
+									"glide",
+									"reset",
+									"teleport",
+								}
 							})
 						end
 					})
