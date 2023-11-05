@@ -20,10 +20,34 @@ do
 
     esp.draw = function()
         if config.esp.enabled then
+            local player_position = GetPlayerTransform().pos
+            local camera_rotation = GetCameraTransform().rot
+
             local origin_x, origin_y
             if config.esp.config.tracers then
                 origin_x = (UiWidth() / 2)
                 origin_y = UiHeight()
+            end
+
+            -- radar
+            if config.esp.config.radar then
+                UiPush()
+                    UiTranslate(20, 20)
+                    UiColor(.3, .3, .3)
+                    UiRect(252, 252)
+
+                    UiTranslate(1, 1)
+                    UiColor(.1, .1, .1)
+                    UiRect(250, 250)
+
+                    UiPush()
+                        UiAlign("center middle")
+                        UiTranslate(125, 125)
+                        UiColor(.8, .8, .8)
+                        UiRect(245, 1)
+                        UiRect(1, 245)
+                    UiPop()
+                UiPop()
             end
 
             -- loot
@@ -60,7 +84,7 @@ do
                             local item_position = GetBodyTransform(item).pos
                             local item_x, item_y, item_d = UiWorldToPixel(item_position)
                             
-                            if item_d > 0 then
+                            if item_y <= origin_y and item_d > 0 then
                                 local direction = (origin_x - item_x) > 0 and 1 or -1
                                 
                                 local side_a = math.abs(origin_x - item_x)
@@ -76,14 +100,43 @@ do
                                 
                                 UiPush()
                                     UiTranslate(origin_x, origin_y)
-                                    UiAlign("middle bottom")
+                                    UiAlign("top")
                                     UiRotate(angle)
                                 
                                     UiColor(1, 1, 0)
                                     
-                                    UiRect(1, -(side_c * 2))
+                                    UiRect(1, -side_c)
                                 UiPop()
                             end
+                        end
+
+                        -- radar
+                        if config.esp.config.radar then
+                            UiPush()
+                                UiAlign("center middle")
+                                UiTranslate(146, 146)
+
+                                local item_position = VecSub(GetBodyTransform(item).pos, player_position)
+                                item_position[1] = (item_position[1] / 2)
+                                item_position[3] = (item_position[3] / 2)
+
+                                if (
+                                    item_position[1] <= 120 and
+                                    item_position[1] >= -120 and
+                                    item_position[3] <= 120 and
+                                    item_position[3] >= -120
+                                ) then
+                                    UiPush()
+                                        local _, pitch, _ = GetQuatEuler(camera_rotation)
+                                        UiRotate(-pitch)
+                                        UiTranslate(item_position[1], item_position[3])
+                                        
+                                        UiRotate(pitch)
+                                        UiColor(1, 1, 0)
+                                        UiRect(1, 1)
+                                    UiPop()
+                                end
+                            UiPop()
                         end
                     end
                 end
@@ -182,7 +235,7 @@ do
                             local torso_position = GetBodyTransform(entity["torso"]).pos
                             local torso_x, torso_y, torso_d = UiWorldToPixel(torso_position)
                             
-                            if torso_d > 0 then
+                            if torso_y <= origin_y and torso_d > 0 then
                                 local direction = (origin_x - torso_x) > 0 and 1 or -1
                                 
                                 local side_a = math.abs(origin_x - torso_x)
@@ -198,12 +251,12 @@ do
                                 
                                 UiPush()
                                     UiTranslate(origin_x, origin_y)
-                                    UiAlign("middle bottom")
+                                    UiAlign("top")
                                     UiRotate(angle)
                                 
                                     UiColor(1, 0, 0)
                                     
-                                    UiRect(1, -(side_c * 2))
+                                    UiRect(1, -side_c)
                                 UiPop()
                             end
                         end
@@ -280,6 +333,35 @@ do
                                     UiPop()
                                 UiPop()
                             end
+                        end
+
+                        -- radar
+                        if config.esp.config.radar then
+                            UiPush()
+                                UiAlign("center middle")
+                                UiTranslate(146, 146)
+
+                                local torso_position = VecSub(GetBodyTransform(entity["torso"]).pos, player_position)
+                                torso_position[1] = (torso_position[1] / 2)
+                                torso_position[3] = (torso_position[3] / 2)
+
+                                if (
+                                    torso_position[1] <= 120 and
+                                    torso_position[1] >= -120 and
+                                    torso_position[3] <= 120 and
+                                    torso_position[3] >= -120
+                                ) then
+                                    UiPush()
+                                        local _, pitch, _ = GetQuatEuler(camera_rotation)
+                                        UiRotate(-pitch)
+                                        UiTranslate(torso_position[1], torso_position[3])
+                                        
+                                        UiRotate(pitch)
+                                        UiColor(1, 0, 0)
+                                        UiRect(3, 3)
+                                    UiPop()
+                                end
+                            UiPop()
                         end
                     end
                 end

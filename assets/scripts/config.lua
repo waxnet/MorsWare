@@ -60,6 +60,7 @@ do
                 highlights = registry.get_bool("esp.config.highlights"),
                 tracers = registry.get_bool("esp.config.tracers"),
                 boxes = registry.get_bool("esp.config.boxes"),
+                radar = registry.get_bool("esp.config.radar"),
             },
             targets = {
                 entities = registry.get_bool("esp.targets.entities"),

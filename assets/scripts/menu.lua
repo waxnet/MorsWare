@@ -503,6 +503,10 @@ do
 								["text"] = "Boxes",
 								["path"] = "esp.config.boxes"
 							})
+							menu.new_toggle({
+								["text"] = "Radar",
+								["path"] = "esp.config.radar"
+							})
 						end
 					})
 				end
