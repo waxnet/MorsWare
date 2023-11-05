@@ -259,7 +259,7 @@ do
 				UiColor(version_rgb[1], version_rgb[2], version_rgb[3])
 				UiTranslate((width - 3), 9)
 				UiAlign("middle right")
-				UiText("v1.2")
+				UiText("v1.3")
 			UiPop()
 			UiTranslate(0, 18)
 

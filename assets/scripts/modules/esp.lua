@@ -121,10 +121,10 @@ do
                                 item_position[3] = (item_position[3] / 2)
 
                                 if (
-                                    item_position[1] <= 120 and
-                                    item_position[1] >= -120 and
-                                    item_position[3] <= 120 and
-                                    item_position[3] >= -120
+                                    item_position[1] <= 125 and
+                                    item_position[1] >= -125 and
+                                    item_position[3] <= 125 and
+                                    item_position[3] >= -125
                                 ) then
                                     UiPush()
                                         local _, pitch, _ = GetQuatEuler(camera_rotation)
