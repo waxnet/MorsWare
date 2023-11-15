@@ -1,19 +1,3 @@
-local function IDBuilder(t)
-    local ID=""
-    for _,s in ipairs(t)do
-        ID=ID..s.."_"
-    end
-    return ID:sub(1,#ID-1)
-end
-
-local function Split(s, delimiter)
-    local result = {};
-    for match in (s..delimiter):gmatch("(.-)"..delimiter) do
-        table.insert(result, match);
-    end
-    return result;
-end
-
 silentaim = {}
 do
     silentaim.tick = function()
