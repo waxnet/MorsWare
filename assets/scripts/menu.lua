@@ -4,12 +4,12 @@ do
 		["draw"] = false,
 		["tab"] = "combat",
 		["tab_offset"] = 0,
-		["section_offset"] = 0
+		["section_offset"] = 2
 	}
 	
 	menu.reset = function()
 		menu.data["tab_offset"] = 0
-		menu.data["section_offset"] = 0
+		menu.data["section_offset"] = 2
 	end
 
 	menu.new_tab = function(data)
@@ -31,7 +31,7 @@ do
 				menu.data["tab"] = tab_id
 			end
 			
-			local tab_w, tab_h = UiGetTextSize(name)
+			local tab_w, tab_h = (UiGetTextSize(name) + 8)
 			menu.data["tab_offset"] = menu.data["tab_offset"] + tab_w
 		UiPop()
 		
@@ -58,7 +58,7 @@ do
 			components()
 		UiPop()
 
-		if menu.data["section_offset"] == 0 then
+		if menu.data["section_offset"] == 2 then
 			menu.data["section_offset"] = 170
 		end
 	end
@@ -86,7 +86,7 @@ do
 
             UiText(text)
             UiPush()
-                UiTranslate(text_width - 2, 0)
+                UiTranslate(text_width - 10, 0)
 
                 if toggle_value then
                     UiColor(0, 1, 0)
@@ -132,7 +132,7 @@ do
                 UiTranslate(text_width - 2, 0)
                 UiText(tostring(slider_value))
 
-                UiTranslate(path_value_width - 2, 1)
+                UiTranslate(path_value_width + 2, 1)
                 UiPush()
                     UiFont("bold.ttf", 20)
                     UiText("+")
@@ -176,7 +176,7 @@ do
 
             UiText(text)
             UiPush()
-                UiTranslate(text_width - 2, 0)
+                UiTranslate(text_width - 10, 0)
 
                 if UiTextButton(list_value) then
                     local new_list_value = nil
@@ -259,7 +259,7 @@ do
 				UiColor(version_rgb[1], version_rgb[2], version_rgb[3])
 				UiTranslate((width - 3), 9)
 				UiAlign("middle right")
-				UiText("v1.3")
+				UiText("v1.4")
 			UiPop()
 			UiTranslate(0, 18)
 
@@ -421,6 +421,13 @@ do
 								["path"] = "silentaim.config.distance.range",
 								["max"] = 1000,
 								["min"] = 0
+							})
+
+							-- weapon
+							menu.new_subsection("Auto Shoot")
+							menu.new_toggle({
+								["text"] = "Enabled",
+								["path"] = "silentaim.config.auto_shoot.enabled"
 							})
 						end
 					})

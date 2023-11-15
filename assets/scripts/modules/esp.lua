@@ -44,8 +44,30 @@ do
                         UiAlign("center middle")
                         UiTranslate(125, 125)
                         UiColor(.8, .8, .8)
+
                         UiRect(245, 1)
                         UiRect(1, 245)
+                        UiRect(3, 3)
+
+                        local fov = GetInt("options.gfx.fov")
+                        local fov_angle = (fov / 2)
+
+                        local fov_line_length = (122 / math.sin(math.rad(fov_angle)))
+                        if fov_angle < 45 then
+                            fov_line_length = (122 / math.sin(math.rad(90 - fov_angle)))
+                        end
+
+                        UiAlign("bottom")
+                        UiPush()
+                            UiTranslate(-1, 0)
+                            UiRotate(fov_angle)
+                            UiRect(1, fov_line_length)
+                        UiPop()
+                        UiPush()
+                            UiTranslate(-1, 0)
+                            UiRotate(-fov_angle)
+                            UiRect(1, fov_line_length)
+                        UiPop()
                     UiPop()
                 UiPop()
             end
@@ -116,15 +138,13 @@ do
                                 UiAlign("center middle")
                                 UiTranslate(146, 146)
 
-                                local item_position = VecSub(GetBodyTransform(item).pos, player_position)
-                                item_position[1] = (item_position[1] / 2)
-                                item_position[3] = (item_position[3] / 2)
+                                local item_position = VecScale(VecSub(GetBodyTransform(item).pos, player_position), .5)
 
                                 if (
-                                    item_position[1] <= 125 and
-                                    item_position[1] >= -125 and
-                                    item_position[3] <= 125 and
-                                    item_position[3] >= -125
+                                    item_position[1] <= 120 and
+                                    item_position[1] >= -120 and
+                                    item_position[3] <= 120 and
+                                    item_position[3] >= -120
                                 ) then
                                     UiPush()
                                         local _, pitch, _ = GetQuatEuler(camera_rotation)
@@ -133,7 +153,7 @@ do
                                         
                                         UiRotate(pitch)
                                         UiColor(1, 1, 0)
-                                        UiRect(1, 1)
+                                        UiRect(3, 3)
                                     UiPop()
                                 end
                             UiPop()
@@ -341,9 +361,7 @@ do
                                 UiAlign("center middle")
                                 UiTranslate(146, 146)
 
-                                local torso_position = VecSub(GetBodyTransform(entity["torso"]).pos, player_position)
-                                torso_position[1] = (torso_position[1] / 2)
-                                torso_position[3] = (torso_position[3] / 2)
+                                local torso_position = VecScale(VecSub(GetBodyTransform(entity["torso"]).pos, player_position), .5)
 
                                 if (
                                     torso_position[1] <= 120 and

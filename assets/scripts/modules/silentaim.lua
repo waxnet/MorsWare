@@ -1,3 +1,19 @@
+local function IDBuilder(t)
+    local ID=""
+    for _,s in ipairs(t)do
+        ID=ID..s.."_"
+    end
+    return ID:sub(1,#ID-1)
+end
+
+local function Split(s, delimiter)
+    local result = {};
+    for match in (s..delimiter):gmatch("(.-)"..delimiter) do
+        table.insert(result, match);
+    end
+    return result;
+end
+
 silentaim = {}
 do
     silentaim.tick = function()
@@ -78,6 +94,14 @@ do
                     -- set tool position and rotation
                     SetBodyActive(tool_body, false)
                     SetBodyTransform(tool_body, Transform(new_tool_position, new_rotation))
+
+                    if config.silentaim.config.auto_shoot.enabled and guns.can_fire then
+                        SetBool("guns.accidental.shoot", true)
+                    else
+                        SetBool("guns.accidental.shoot", false)
+                    end
+                else
+                    SetBool("guns.accidental.shoot", false)
                 end
             end
         end

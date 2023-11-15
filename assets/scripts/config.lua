@@ -42,6 +42,9 @@ do
                 distance = {
                     check = registry.get_bool("silentaim.config.distance.check"),
                     range = registry.get_int("silentaim.config.distance.range", 500),
+                },
+                auto_shoot = {
+                    enabled = registry.get_bool("silentaim.config.auto_shoot.enabled"),
                 }
             },
         }

@@ -4,6 +4,7 @@
 #include "assets/scripts/utilities.lua"
 #include "assets/scripts/menu.lua"
 
+#include "assets/scripts/data/guns.lua"
 #include "assets/scripts/data/offsets.lua"
 
 #include "assets/scripts/modules/aimbot.lua"
@@ -19,6 +20,8 @@ end
 
 function tick()
     if not utilities.is_playing() then return end
+
+    guns.tick()
 
     silentaim.tick()
     esp.tick()
@@ -42,7 +45,7 @@ function draw()
 
     -- draw menu
     local width = 500
-    local height = 395
+    local height = 415
 
     menu.draw_menu(width, height, 100, ((UiHeight() / 2) - (height / 2)))
 end
